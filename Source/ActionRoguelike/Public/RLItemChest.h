@@ -4,31 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "RLMagicProjectile.generated.h"
+#include "RLGameplayInterface.h"
+#include "RLItemChest.generated.h"
 
-class USphereComponent;
-class UProjectileMovementComponent;
-class UParticleSystemComponent;
+class UStaticMeshComponent;
 
 UCLASS()
-class ACTIONROGUELIKE_API ARLMagicProjectile : public AActor
+class ACTIONROGUELIKE_API ARLItemChest : public AActor, public IRLGameplayInterface
 {
 	GENERATED_BODY()
-	
-public:	
+
+	void Interact_Implementation(APawn* InstigatorPawn);
+
+public:
+
+	UPROPERTY(EditAnywhere)
+	float TargetPitch;
+
 	// Sets default values for this actor's properties
-	ARLMagicProjectile();
+	ARLItemChest();
 
 protected:
 
 	UPROPERTY(VisibleAnywhere)
-	USphereComponent* SphereComp;
+	UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(VisibleAnywhere)
-	UProjectileMovementComponent* MovementComp;
-
-	UPROPERTY(VisibleAnywhere)
-	UParticleSystemComponent* EffectComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* LidMesh;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
