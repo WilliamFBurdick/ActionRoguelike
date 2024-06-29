@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "RLAttributeComponent.h"
 #include "RLInteractionComponent.h"
 
 // Sets default values
@@ -21,6 +22,8 @@ ARLCharacter::ARLCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	InteractionComp = CreateDefaultSubobject<URLInteractionComponent>("InteractionComp");
+
+	AttributeComp = CreateDefaultSubobject<URLAttributeComponent>("AttributeComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -67,14 +70,36 @@ void ARLCharacter::PrimaryAttack()
 
 void ARLCharacter::PrimaryAttack_TimeElapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	if (ensure(ProjectileClass))
+	{
+		FCollisionObjectQueryParams ObjectQueryParams;
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
 
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
+		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+		FVector End = CameraComp->GetComponentLocation() + CameraComp->GetForwardVector() * 100000000.0f;
+
+		FHitResult Hit;
+		bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, HandLocation, End, ObjectQueryParams);
+
+		FRotator ProjectileRotation;
+		if (bBlockingHit)
+		{
+			ProjectileRotation = (Hit.ImpactPoint - HandLocation).Rotation();
+		}
+		else
+		{
+			ProjectileRotation = (End - HandLocation).Rotation();
+		}
+
+		FTransform SpawnTM = FTransform(ProjectileRotation, HandLocation);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Instigator = this;
+
+		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	}
 }
 
 void ARLCharacter::PrimaryInteract()

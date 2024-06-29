@@ -9,6 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class URLInteractionComponent;
+class URLAttributeComponent;
 class UAnimMontage;
 
 UCLASS()
@@ -38,6 +39,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	URLInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
+	URLAttributeComponent* AttributeComp;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -4,6 +4,7 @@
 #include "ExplosiveBarrel.h"
 #include "Components/StaticMeshComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "RLAttributeComponent.h"
 #include <Runtime/Engine/Public/DrawDebugHelpers.h>
 
 // Sets default values
@@ -48,10 +49,16 @@ void AExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Oth
 
 	UE_LOG(LogTemp, Log, TEXT("OnActorHit in Explosive Barrel"));
 
-	UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, at game time: %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
+	UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, Component: %s, at game time: %f"), *GetNameSafe(OtherActor), *GetNameSafe(OtherComponent), GetWorld()->TimeSeconds);
 
 	FString CombinedString = FString::Printf(TEXT("Hit at location: %s"), *Hit.ImpactPoint.ToString());
 	DrawDebugString(GetWorld(), Hit.ImpactPoint, CombinedString, nullptr, FColor::Green, 2.0f, true);
+
+	URLAttributeComponent* AttributeComp = Cast<URLAttributeComponent>(OtherActor->GetComponentByClass(URLAttributeComponent::StaticClass()));
+	if (AttributeComp)
+	{
+		AttributeComp->ApplyHealthChange(-50.0f);
+	}
 }
 
 // Called every frame
