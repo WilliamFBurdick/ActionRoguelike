@@ -9,6 +9,11 @@ URLAttributeComponent::URLAttributeComponent()
 	Health = 100;
 }
 
+bool URLAttributeComponent::IsAlive() const
+{
+	return Health > 0.0f;
+}
+
 bool URLAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;
