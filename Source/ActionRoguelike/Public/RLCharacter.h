@@ -54,6 +54,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
 	URLAttributeComponent* AttributeComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	UParticleSystem* HandVFX;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

@@ -3,16 +3,20 @@
 
 #include "RLMagicProjectile.h"
 #include "Components/SphereComponent.h"
+#include "Components/AudioComponent.h"
 #include "RLAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ARLMagicProjectile::ARLMagicProjectile()
 	:AProjectileBase()
 {
-	
 
 	SphereComp->SetSphereRadius(20.0f);
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ARLMagicProjectile::OnActorOverlap);
+
+	SoundComp = CreateDefaultSubobject<UAudioComponent>("SoundComp");
+	SoundComp->SetupAttachment(SphereComp);
 
 	DamageAmount = 20.0f;
 }
@@ -27,6 +31,11 @@ void ARLMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent
 			AttributeComp->ApplyHealthChange(-DamageAmount);
 		}
 
+
+		if (ensure(ImpactSound))
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+		}
 		Destroy();
 	}
 }

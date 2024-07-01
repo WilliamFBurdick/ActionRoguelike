@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "RLAttributeComponent.h"
 #include "RLInteractionComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ARLCharacter::ARLCharacter()
@@ -150,6 +151,11 @@ void ARLCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 		FTransform SpawnTM = FTransform(ProjectileRotation, HandLocation);
 
 		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
+
+		if (ensure(HandVFX))
+		{
+			UGameplayStatics::SpawnEmitterAttached(HandVFX, GetMesh(), "Muzzle_01");
+		}
 	}
 }
 
@@ -159,6 +165,10 @@ void ARLCharacter::OnHealthChanged(AActor* InstigatorActor, URLAttributeComponen
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
+	}
+	else if (Delta < 0.0f)
+	{
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
 	}
 }
 

@@ -7,6 +7,12 @@
 URLAttributeComponent::URLAttributeComponent()
 {
 	Health = 100;
+	HealthMax = 100;
+}
+
+float URLAttributeComponent::GetMaxHealth() const
+{
+	return HealthMax;
 }
 
 bool URLAttributeComponent::IsAlive() const
@@ -17,6 +23,7 @@ bool URLAttributeComponent::IsAlive() const
 bool URLAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;
+	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
 	return true;
 }
