@@ -17,6 +17,13 @@ class ACTIONROGUELIKE_API ARLCharacter : public ACharacter
 {
 	GENERATED_BODY()
 protected:
+
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName TimeToHitParamName;
+
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName HandSocketName;
+
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
 
@@ -28,6 +35,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Attack")
 	UAnimMontage* AttackAnim;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	UParticleSystem* CastingEffect;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_BlackholeAttack;
@@ -53,9 +63,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
 	URLAttributeComponent* AttributeComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Effects")
-	UParticleSystem* HandVFX;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

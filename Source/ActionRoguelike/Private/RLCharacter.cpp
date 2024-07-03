@@ -31,6 +31,9 @@ ARLCharacter::ARLCharacter()
 	bUseControllerRotationYaw = false;
 
 	AttackAnimDelay = 0.2f;
+
+	HandSocketName = "Muzzle_01";
+	TimeToHitParamName = "TimeToHit";
 }
 
 void ARLCharacter::PostInitializeComponents()
@@ -119,7 +122,7 @@ void ARLCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
 	if (ensureAlways(ClassToSpawn))
 	{
-		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -152,9 +155,9 @@ void ARLCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 
 		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
 
-		if (ensure(HandVFX))
+		if (ensure(CastingEffect))
 		{
-			UGameplayStatics::SpawnEmitterAttached(HandVFX, GetMesh(), "Muzzle_01");
+			UGameplayStatics::SpawnEmitterAttached(CastingEffect, GetMesh(), HandSocketName);
 		}
 	}
 }
@@ -168,7 +171,7 @@ void ARLCharacter::OnHealthChanged(AActor* InstigatorActor, URLAttributeComponen
 	}
 	else if (Delta < 0.0f)
 	{
-		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 	}
 }
 
