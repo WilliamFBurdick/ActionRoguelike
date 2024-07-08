@@ -57,7 +57,7 @@ void AExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Oth
 	URLAttributeComponent* AttributeComp = Cast<URLAttributeComponent>(OtherActor->GetComponentByClass(URLAttributeComponent::StaticClass()));
 	if (AttributeComp)
 	{
-		AttributeComp->ApplyHealthChange(-50.0f);
+		AttributeComp->ApplyHealthChange(this, -50.0f);
 	}
 }
 

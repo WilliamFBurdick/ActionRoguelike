@@ -7,6 +7,9 @@
 #include "RLAICharacter.generated.h"
 
 class UPawnSensingComponent;
+class URLAttributeComponent;
+class UUserWidget;
+class URLWorldUserWidget;
 
 UCLASS()
 class ACTIONROGUELIKE_API ARLAICharacter : public ACharacter
@@ -19,10 +22,26 @@ public:
 
 protected:
 
+	URLWorldUserWidget* ActiveHealthBar;
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Effects")
+	FName TimeToHitParamName;
+
+	void SetTargetActor(AActor* NewTarget);
+
 	virtual void PostInitializeComponents() override;
+
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, URLAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	UPawnSensingComponent* PawnSensingComp;
+
+	UPROPERTY(VisibleAnywhere, Category="Components")
+	URLAttributeComponent* AttributeComp;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);

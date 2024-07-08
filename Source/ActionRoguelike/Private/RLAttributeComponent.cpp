@@ -25,7 +25,7 @@ bool URLAttributeComponent::IsFullHealth() const
 	return Health == HealthMax;
 }
 
-bool URLAttributeComponent::ApplyHealthChange(float Delta)
+bool URLAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	float OldHealth = Health;
 
@@ -33,11 +33,31 @@ bool URLAttributeComponent::ApplyHealthChange(float Delta)
 	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
 	float ActualDelta = Health - OldHealth;
-	OnHealthChanged.Broadcast(nullptr, this, Health, ActualDelta);
-	return true;
+	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+
+	return ActualDelta != 0;
 }
 
 float URLAttributeComponent::GetHealth()
 {
 	return Health;
+}
+
+URLAttributeComponent* URLAttributeComponent::GetAttributes(AActor* FromActor)
+{
+	if (FromActor)
+	{
+		return Cast<URLAttributeComponent>(FromActor->GetComponentByClass(URLAttributeComponent::StaticClass()));
+	}
+	return nullptr;
+}
+
+bool URLAttributeComponent::IsActorAlive(AActor* Actor)
+{
+	URLAttributeComponent* AttributeComponent = GetAttributes(Actor);
+	if (AttributeComponent)
+	{
+		return AttributeComponent->IsAlive();
+	}
+	return false;
 }

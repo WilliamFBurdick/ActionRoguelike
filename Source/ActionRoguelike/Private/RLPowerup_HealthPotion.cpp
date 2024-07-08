@@ -18,10 +18,10 @@ void ARLPowerup_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		return;
 	}
 
-	URLAttributeComponent* AttributeComp = Cast<URLAttributeComponent>(InstigatorPawn->GetComponentByClass(URLAttributeComponent::StaticClass()));
+	URLAttributeComponent* AttributeComp = URLAttributeComponent::GetAttributes(InstigatorPawn);
 	if (ensure(AttributeComp) && !AttributeComp->IsFullHealth())
 	{
-		if (AttributeComp->ApplyHealthChange(AttributeComp->GetMaxHealth()))
+		if (AttributeComp->ApplyHealthChange(this, AttributeComp->GetMaxHealth()))
 		{
 			HideAndCooldownPowerup();
 		}
